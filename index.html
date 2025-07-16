@@ -1,0 +1,2924 @@
+<!DOCTYPE html>
+<html lang="fr">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Miner
+  </title>
+  <style>
+
+#pub-banner {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #222;
+  text-align: center;
+  padding: 10px 0;
+  z-index: 9999;
+}
+
+#pub-banner img {
+  max-width: 468px;
+  width: 100%;
+  height: auto;
+}
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f9a825">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" href="icon.png">
+
+   /* --- CSS Styles --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #34595e;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .main-content-wrapper {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1600px; /* Increased max-width for new columns */
+            width: 100%;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .game-container {
+            background-color: #34495e;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            padding: 30px;
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+            flex-grow: 1;
+        }
+
+        .skins-container, .chests-container, .pet-shop-container { /* Added .pet-shop-container */
+            background-color: #34495e;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            width: 100%;
+            max-width: 300px; /* Width for side columns */
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+            flex-shrink: 0;
+            margin-bottom: 20px;
+        }
+
+        #click-button-wrapper {
+            width: 250px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding-top: 50px;
+            gap: 20px;
+        }
+
+        #click-button {
+            background-color: transparent; /* Changed to transparent for image */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 2em;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            outline: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        #click-button img {
+            max-width: 250px;
+            max-height: 250px;
+            margin-bottom: 0;
+            pointer-events: none;
+        }
+
+        .game-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .game-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .shop-container, .skins-list, .chests-list, .inventory-list, .pet-list { /* Added .pet-list */
+            background-color: #4a698c;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .chests-container {
+            background-color: #34495e;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            width: 100%;
+            max-width: 250px;
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+            flex-shrink: 0;
+            margin-top: 0;
+        }
+
+        h1 {
+            color: #f1c40f;
+            margin-bottom: 25px;
+            font-size: 2.8em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .score-display {
+            background-color: #2980b9;
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-size: 1.5em;
+            font-weight: bold;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #points-display { color: #27ae60; }
+        #ppc-display { color: #e67e22; }
+        #pps-display { color: #9b59b6; }
+        #prestige-count-display { color: #8e44ad; }
+        #prestige-bonus-display { color: #3498db; }
+
+        .shop-container h2, .skins-container h2, .chests-container h2, .pet-shop-container h2 {
+            color: #f39c12;
+            margin-bottom: 20px;
+            font-size: 2.2em;
+        }
+
+        .upgrade-section, .skin-item, .chest-item, .inventory-item, .pet-item { /* Added .pet-item */
+            background-color: #5b7a9f;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .upgrade-section h3, .skins-list h3, .chests-list h3, .inventory-list h3, .pet-list h3 { /* Added .pet-list h3 */
+            color: #fff;
+            font-size: 1.6em;
+            border-bottom: 1px solid #7f8c8d;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .upgrade-item, .skin-item, .chest-item, .inventory-item, .pet-item { /* Added .pet-item */
+            background-color: #6c8cb0;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            flex-wrap: wrap;
+        }
+
+        .upgrade-item .item-content, .skin-item .item-content, .chest-item .item-content, .inventory-item .item-content, .pet-item .item-content { /* Added .pet-item */
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        .upgrade-item img, .skin-item img, .chest-item img, .inventory-item img, .pet-item img { /* Added .pet-item img */
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 5px;
+            background-color: rgba(0,0,0,0.1);
+            padding: 2px;
+        }
+
+        .upgrade-item p, .skin-item p, .chest-item p, .inventory-item p, .pet-item p { /* Added .pet-item p */
+            margin: 0;
+            font-size: 1.1em;
+        }
+
+        .upgrade-item .cost, .skin-item .cost, .chest-item .cost, .pet-item .cost { /* Added .pet-item .cost */
+            font-weight: bold;
+            color: #f1c40f;
+            margin-right: 10px;
+        }
+
+        .upgrade-item .owned, .upgrade-item .level, .skin-item .status, .inventory-item .count, .pet-item .status { /* Added .pet-item .status */
+            font-weight: bold;
+            color: #2ecc71;
+            margin-left: auto;
+        }
+
+        .buy-button, .skin-button, .chest-button, .pet-button { /* Added .pet-button */
+            background-color: #e67e22;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            white-space: nowrap;
+        }
+
+        .skin-button.active { background-color: #2ecc71; }
+        .pet-button.active { background-color: #2ecc71; } /* For equipped pets */
+
+
+        .buy-button:hover:not(:disabled), .skin-button:hover:not(:disabled):not(.active), .chest-button:hover:not(:disabled), .pet-button:hover:not(:disabled):not(.active) { /* Added .pet-button */
+            background-color: #d35400;
+            transform: translateY(-1px);
+        }
+
+        .buy-button:active:not(:disabled), .skin-button:active:not(:disabled):not(.active), .chest-button:active:not(:disabled), .pet-button:active:not(:disabled):not(.active) { /* Added .pet-button */
+            background-color: #bf4700;
+            transform: translateY(0.5px);
+        }
+
+        .buy-button:disabled, .skin-button:disabled, .chest-button:disabled, .pet-button:disabled { /* Added .pet-button */
+            background-color: #95a5a6;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .reset-button, #prestige-button {
+            background-color: #c0392b;
+            margin-top: 30px;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        .reset-button:hover, #prestige-button:hover { background-color: #e74c3c; }
+        #prestige-button { background-color: #8e44ad; }
+        #prestige-button:hover { background-color: #9b59b6; }
+
+        @keyframes pulseEffect {
+            0% { transform: scale(1); box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3); }
+            50% { transform: scale(1.02); box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4); }
+            100% { transform: scale(1); box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3); }
+        }
+
+        .auto-clicking { animation: pulseEffect 1s ease-in-out infinite; }
+
+        #win-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: black;
+            color: limegreen;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 4em;
+            font-weight: bold;
+            z-index: 1000;
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        #win-screen button {
+            margin-top: 50px;
+            padding: 20px 40px;
+            font-size: 1.5em;
+            background-color: #c0392b;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        #win-screen button:hover { background-color: #e74c3c; }
+
+        .chest-probabilities {
+            font-size: 0.9em;
+            color: #ddd;
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+        .chest-probabilities p { margin: 2px 0; }
+        .skin-item .bonus, .pet-item .bonus {
+            font-weight: bold;
+            color: #2ecc71;
+            margin-left: 10px;
+        }
+
+        /* --- Custom Alert Modal --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001; /* Above win screen */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #4a698c;
+            margin: auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            animation: slideIn 0.3s ease-out;
+            position: relative;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-content h3 {
+            color: #f39c12;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .modal-content p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .modal-button {
+            background-color: #e67e22;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .modal-button.confirm { background-color: #2ecc71; }
+        .modal-button.cancel { background-color: #c0392b; }
+
+        .modal-button:hover {
+            filter: brightness(1.1);
+        }
+
+        /* --- Achievement Notification --- */
+        #achievement-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #27ae60;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            font-size: 1.3em;
+            font-weight: bold;
+            z-index: 1002; /* Above modal */
+            display: none;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+
+        #achievement-notification.show {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* --- Achievements List (Hidden by default, shown on click) --- */
+        #achievements-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        #achievements-modal-content {
+            background-color: #34495e;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80%;
+            overflow-y: auto;
+            text-align: left;
+            position: relative;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        #achievements-modal-content h2 {
+            color: #f39c12;
+            margin-bottom: 25px;
+            font-size: 2.5em;
+            text-align: center;
+        }
+
+        #achievements-modal-content .achievement-item {
+            background-color: #4a698c;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s ease;
+        }
+
+        #achievements-modal-content .achievement-item.unlocked {
+            background-color: #2ecc71; /* Green for unlocked */
+        }
+
+        #achievements-modal-content .achievement-item.unlocked .achievement-status {
+            color: white; /* White checkmark */
+        }
+
+        #achievements-modal-content .achievement-item .achievement-status {
+            font-size: 2em;
+            color: #95a5a6; /* Grey for locked */
+            width: 40px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        #achievements-modal-content .achievement-item .achievement-details h3 {
+            margin: 0;
+            color: white;
+            font-size: 1.4em;
+        }
+
+        #achievements-modal-content .achievement-item .achievement-details p {
+            margin: 5px 0 0 0;
+            color: #ecf0f1;
+            font-size: 0.95em;
+        }
+
+        #close-achievements-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 2em;
+            color: white;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        #close-achievements-modal:hover {
+            color: #e74c3c;
+        }
+
+        /* --- Achievement Counter --- */
+        #achievement-counter-display {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            font-size: 1.1em;
+            font-weight: bold;
+            z-index: 999;
+            cursor: pointer; /* Make it clickable */
+            transition: background-color 0.2s ease;
+        }
+
+        #achievement-counter-display:hover {
+            background-color: #2980b9;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+   /* Style personnalisé pour Pet Shop horizontal sous la boutique */
+.full-width-separated {
+    margin-top: 30px;
+    background-color: #34495e;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    width: 100%;
+}
+
+.full-width-separated .pet-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.full-width-separated .pet-item {
+    flex: 1 1 200px;
+    max-width: 220px;
+}
+   /* Correction de l'affichage horizontal réel du Pet Shop */
+.pet-shop-container.full-width-separated {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.pet-shop-container.full-width-separated .pet-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.pet-shop-container.full-width-separated .pet-item {
+    width: 200px;
+    flex: 0 0 auto;
+}
+   /* Mise en page en grille avec 2 animaux par ligne dans le Pet Shop */
+.pet-shop-container.full-width-separated .pet-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    justify-items: center;
+}
+
+.pet-shop-container.full-width-separated .pet-item {
+    width: 100%;
+    max-width: 300px;
+}
+   /* Forcer le pet shop à utiliser toute la largeur de .game-container comme la boutique */
+.pet-shop-container.full-width-separated {
+    width: 100%;
+    max-width: 700px; /* correspond à .game-container max-width */
+    align-self: center;
+}
+/* Responsive Layout */
+@media screen and (max-width: 1200px) {
+  .main-content-wrapper {
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .skins-container, .chests-container, .pet-shop-container, .game-container {
+    max-width: 90%;
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  body {
+    padding: 10px;
+    align-items: flex-start;
+  }
+
+  #click-button-wrapper {
+    padding-top: 20px;
+    width: 100%;
+  }
+
+  #click-button img {
+    max-width: 150px;
+    max-height: 150px;
+  }
+
+  .game-button, .buy-button, .skin-button, .pet-button {
+    font-size: 0.9em;
+    padding: 8px 12px;
+  }
+
+  h1 {
+    font-size: 1.8em;
+  }
+
+  .score-display {
+    font-size: 1.2em;
+  }
+
+  .skin-item img, .pet-item img, .chest-item img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .pet-shop-container.full-width-separated .pet-list {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+@media screen and (max-width: 768px) {
+  .main-content-wrapper {
+    flex-direction: column;
+  }
+
+  /* Réorganiser l'ordre d'affichage */
+  #click-button-wrapper {
+    order: 1;
+  }
+
+  .game-container {
+    order: 2;
+  }
+
+  .chests-container {
+    order: 3;
+    width: 100%;
+    max-width: 90%;
+    margin: 0 auto;
+  }
+
+  .skins-container {
+    order: 4;
+    width: 100%;
+    max-width: 90%;
+    margin: 0 auto;
+  }
+}
+  </style>
+ </head>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(() => console.log('✅ Service Worker enregistré'))
+      .catch(error => console.error('❌ Erreur SW:', error));
+  }
+</script>
+ <body>
+   <div class="main-content-wrapper">
+   <div id="click-button-wrapper">
+    <button class="game-button" id="click-button">
+     <img alt="Bouton Clic" id="clicker-image" src="mon_pixel_art (1).png"/>
+    </button>
+    <div class="chests-container">
+     <h2>
+      Chests
+     </h2>
+     <div class="chests-list">
+      <div class="chest-item" id="chest-0">
+       <div class="item-content">
+        <img alt="Common Chest" src="images/CommonChest.png"/>
+        <p>
+         Common Chest
+        </p>
+       </div>
+       <p>
+        Cost:
+        <span class="cost">
+         500
+        </span>
+        coins
+       </p>
+       <div class="chest-probabilities">
+        <p>
+         Probabilities:
+        </p>
+        <p>
+         Advanced Miner; Bonus: 60%
+        </p>
+        <p>
+         Dev Skin: 10%
+        </p>
+        <p>
+         Manager: 30%
+        </p>
+       </div>
+       <button class="chest-button" data-chest-id="0">
+        Open
+       </button>
+      </div>
+      <div class="chest-item" id="chest-1">
+       <div class="item-content">
+        <img alt="Rare Chest" src="images/RareChest.png"/>
+        <p>
+         Rare Chest
+        </p>
+       </div>
+       <p>
+        Cost:
+        <span class="cost">
+         2000
+        </span>
+        points
+       </p>
+       <div class="chest-probabilities">
+        <p>
+         Probabilities:
+        </p>
+        <p>
+         Advanced Miner; Bonus: 40%
+        </p>
+        <p>
+         Dev Skin: 25%
+        </p>
+        <p>
+         Manager: 35%
+        </p>
+       </div>
+       <button class="chest-button" data-chest-id="1">
+        Open
+       </button>
+      </div>
+      <div class="chest-item" id="chest-2">
+       <div class="item-content">
+        <img alt="Epic Chest" src="images/EpicChest.png"/>
+        <p>
+         Epique Chest
+        </p>
+       </div>
+       <p>
+        Cost:
+        <span class="cost">
+         5000
+        </span>
+        points
+       </p>
+       <div class="chest-probabilities">
+        <p>
+         Probabilities:
+        </p>
+        <p>
+         Advanced Miner; Bonus: 20%
+        </p>
+        <p>
+         Dev Skin: 30%
+        </p>
+        <p>
+         Manager: 50%
+        </p>
+       </div>
+       <button class="chest-button" data-chest-id="2">
+        Open
+       </button>
+      </div>
+      <div class="chest-item" id="chest-3">
+       <div class="item-content">
+        <img alt="Legendary Chest" src="images/LegendaryChest.png"/>
+        <p>
+         Legendary Chest
+        </p>
+       </div>
+       <p>
+        Cost:
+        <span class="cost">
+         7500
+        </span>
+        points
+       </p>
+       <div class="chest-probabilities">
+        <p>
+         Probabilities:
+        </p>
+        <p>
+         Advanced Miner; Bonus: 10%
+        </p>
+        <p>
+         Dev Skin: 20%
+        </p>
+        <p>
+         Manager: 70%
+        </p>
+       </div>
+       <button class="chest-button" data-chest-id="3">
+        Open
+       </button>
+      </div>
+     </div>
+     <h2>
+      Item Inventory
+     </h2>
+     <div class="inventory-list">
+      <div class="inventory-item" id="item-advanced-miner-bonus">
+       <div class="item-content">
+        <img alt="Advanced Miner Bonus" src="images/Upgrade.png"/>
+        <p>
+         Advanced Miner Bonus; (+5 CPS per Advanced Miner;)
+        </p>
+       </div>
+       <p>
+        Possessed:
+        <span class="count">
+         0
+        </span>
+       </p>
+       <p class="item-description">
+       </p>
+      </div>
+      <div class="inventory-item" id="item-dev-skin">
+       <div class="item-content">
+        <img alt="Dev Skin" src="images/DevSkin.png"/>
+        <p>
+         Dev Skin
+        </p>
+       </div>
+       <p>
+        Possessed:
+        <span class="count">
+         0
+        </span>
+       </p>
+       <p class="item-description">
+       </p>
+      </div>
+      <div class="inventory-item" id="item-manager">
+       <div class="item-content">
+        <img alt="Manager" src="images/Manager.png"/>
+        <p>
+         Manager (Miners are more effective)
+        </p>
+       </div>
+       <p>
+        Possessed:
+        <span class="count">
+         0
+        </span>
+       </p>
+       <p class="item-description">
+       </p>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div class="game-container">
+    <h1>
+     Mine, just MINE
+    </h1>
+    <div class="score-display">
+     Coins:
+     <span id="points-display">
+      0
+     </span>
+     <br/>
+     Coins per click:
+     <span id="ppc-display">
+      1
+     </span>
+     <br/>
+     Coins per second (auto):
+     <span id="pps-display">
+      0
+     </span>
+     <br/>
+     Prestige:
+     <span id="prestige-count-display">
+      0
+     </span>
+     (
+     <span id="prestige-bonus-display">
+      0%
+     </span>
+     CPC Bonus)
+    </div>
+    <div class="shop-container">
+     <h2>
+      Upgrades Shop
+     </h2>
+     <div class="upgrade-section">
+      <h3>
+       Click Upgrades
+      </h3>
+      <div class="upgrade-item" id="ppc-upgrade-0">
+       <div class="item-content">
+        <img alt="Iron Pickaxe" src="images/IronPickaxe.png"/>
+        <p>
+         Iron Pickaxe (+1 CPC)
+        </p>
+       </div>
+       <p>
+        Cost:
+        <span class="cost">
+         10
+        </span>
+        coins
+       </p>
+       <p>
+        Possessed:
+        <span class="owned">
+         0
+        </span>
+       </p>
+       <button class="buy-button" data-upgrade-id="0" data-upgrade-type="ppc-upgrade">
+        Buy
+       </button>
+      </div>
+      <div class="upgrade-item" id="ppc-upgrade-1">
+       <div class="item-content">
+        <img alt="Golden Pickaxe" src="images/GoldenPickaxe.png"/>
+        <p>
+         Golden Pickaxe (+5 PPC)
+        </p>
+       </div>
+       <p>
+        Cost:
+        <span class="cost">
+         100
+        </span>
+        Coins
+       </p>
+       <p>
+        Possessed:
+        <span class="owned">
+         0
+        </span>
+       </p>
+       <button class="buy-button" data-upgrade-id="1" data-upgrade-type="ppc-upgrade">
+        Buy
+       </button>
+      </div>
+      <div class="upgrade-item" id="ppc-upgrade-2">
+       <div class="item-content">
+        <img alt="Diamond Pickaxe" src="images/DiamondPickaxe.png"/>
+        <p>
+         Diamond Pickaxe (+25 PPC)
+        </p>
+       </div>
+       <p>
+        Cost:
+        <span class="cost">
+         1000
+        </span>
+        Coins
+       </p>
+       <p>
+        Possessed:
+        <span class="owned">
+         0
+        </span>
+       </p>
+       <button class="buy-button" data-upgrade-id="2" data-upgrade-type="ppc-upgrade">
+        Buy
+       </button>
+      </div>
+     </div>
+     <div class="miner-section">
+      <h3>
+       Miners (Auto Clicks)
+      </h3>
+      <div class="upgrade-item" id="miner-0">
+       <div class="item-content">
+        <img alt="Basic Miner" src="images/BasicMiner.png"/>
+        <p>
+         Basic Miner (+1 CPS)
+        </p>
+       </div>
+       <p>
+        Cost:
+        <span class="cost">
+         20
+        </span>
+        Coins
+       </p>
+       <p>
+        Possessed:
+        <span class="owned">
+         0
+        </span>
+       </p>
+       <button class="buy-button" data-miner-index="0" data-upgrade-type="miner">
+        Buy
+       </button>
+      </div>
+      <div class="upgrade-item" id="miner-upgrade-0">
+       <div class="item-content">
+        <img alt="Am&eacute;lioration Basic Miner" src="images/BasicMinerUpdate.png"/>
+        <p>
+         Basic Miner Upgrade (+1 CPS/miner)
+        </p>
+       </div>
+       <p>
+        Cost:
+        <span class="cost">
+         100
+        </span>
+        Coins
+       </p>
+       <p>
+        Level:
+        <span class="level">
+         0
+        </span>
+       </p>
+       <button class="buy-button" data-miner-index="0" data-upgrade-type="miner-upgrade">
+        Up
+       </button>
+      </div>
+      <div class="upgrade-item" id="miner-1">
+       <div class="item-content">
+        <img alt="Advanced Miner;" src="images/AdvancedMiner.png"/>
+        <p>
+         Advanced Miner ; (+5 CPS)
+        </p>
+       </div>
+       <p>
+        Cost:
+        <span class="cost">
+         200
+        </span>
+        Coins
+       </p>
+       <p>
+        Possessed:
+        <span class="owned">
+         0
+        </span>
+       </p>
+       <button class="buy-button" data-miner-index="1" data-upgrade-type="miner">
+        Buy
+       </button>
+      </div>
+      <div class="upgrade-item" id="miner-upgrade-1">
+       <div class="item-content">
+        <img alt="Advanced Miner Upgrade;" src="images/AdvancedMinerUpdate.png"/>
+        <p>
+         Advanced Miner Upgrade; (+2 CPS/miner)
+        </p>
+       </div>
+       <p>
+        Cost:
+        <span class="cost">
+         300
+        </span>
+        Coins
+       </p>
+       <p>
+        Level:
+        <span class="level">
+         0
+        </span>
+       </p>
+       <button class="buy-button" data-miner-index="1" data-upgrade-type="miner-upgrade">
+        Up
+       </button>
+      </div>
+      <div class="upgrade-item" id="miner-2">
+       <div class="item-content">
+        <img alt="Expert Miner" src="images/ExpertMiner.png"/>
+        <p>
+         Expert Miner (+20 CPS)
+        </p>
+       </div>
+       <p>
+        Cost:
+        <span class="cost">
+         1500
+        </span>
+        Coins
+       </p>
+       <p>
+        Possessed:
+        <span class="owned">
+         0
+        </span>
+       </p>
+       <button class="buy-button" data-miner-index="2" data-upgrade-type="miner">
+        Buy
+       </button>
+      </div>
+      <div class="upgrade-item" id="miner-upgrade-2">
+       <div class="item-content">
+        <img alt="Expert Miner Upgrade" src="images/ExpertMinerUpdate.png"/>
+        <p>
+         Expert Miner Upgrade (+10 CPS/miner)
+        </p>
+       </div>
+       <p>
+        Cost:
+        <span class="cost">
+         2500
+        </span>
+        Coins
+       </p>
+       <p>
+        Level:
+        <span class="level">
+         0
+        </span>
+       </p>
+       <button class="buy-button" data-miner-index="2" data-upgrade-type="miner-upgrade">
+        Up
+       </button>
+      </div>
+     </div>
+    </div>
+    <div class="pet-shop-container full-width-separated">
+     <h2>
+      Pet Shop
+     </h2>
+     <div class="pet-list">
+      <div class="pet-item" id="pet-0">
+       <div class="item-content">
+        <img alt="Cat" src="images/Cat.png"/>
+        <p>
+         Cat
+        </p>
+       </div>
+       <p>
+        Effect:
+        <span class="bonus">
+         +30% CPC
+        </span>
+       </p>
+       <p>
+        Cost:
+        <span class="cost">
+         1000
+        </span>
+        Coins
+       </p>
+       <button class="pet-button" data-pet-id="0">
+        Buy
+       </button>
+      </div>
+      <div class="pet-item" id="pet-1">
+       <div class="item-content">
+        <img alt="Dog" src="images/Dog.png"/>
+        <p>
+         Dog
+        </p>
+       </div>
+       <p>
+        Effect:
+        <span class="bonus">
+         +20% CPS
+        </span>
+       </p>
+       <p>
+        Cost:
+        <span class="cost">
+         2500
+        </span>
+        Coins
+       </p>
+       <button class="pet-button" data-pet-id="1">
+        Buy
+       </button>
+      </div>
+      <div class="pet-item" id="pet-2">
+       <div class="item-content">
+        <img alt="Bird" src="images/Bird.png"/>
+        <p>
+         Bird
+        </p>
+       </div>
+       <p>
+        Effect:
+        <span class="bonus">
+         +10% CPC
+        </span>
+       </p>
+       <p>
+        Cost:
+        <span class="cost">
+         1500
+        </span>
+        Coins
+       </p>
+       <button class="pet-button" data-pet-id="2">
+        Buy
+       </button>
+      </div>
+      <div class="pet-item" id="pet-3">
+       <div class="item-content">
+        <img alt="Fox" src="images/Fox.png"/>
+        <p>
+         Fox
+        </p>
+       </div>
+       <p>
+        Effect:
+        <span class="bonus">
+         +15% CPS
+        </span>
+       </p>
+       <p>
+        Cost:
+        <span class="cost">
+         3000
+        </span>
+        Coins
+       </p>
+       <button class="pet-button" data-pet-id="3">
+        Buy
+       </button>
+      </div>
+     </div>
+    </div>
+    <button class="game-button" id="prestige-button">
+     Prestige! (Need 10000 coins)
+    </button>
+    <button class="game-button reset-button" id="reset-button">
+     Reset Game
+    </button>
+   </div>
+   <div class="skins-container">
+    <h2>
+     Click Skins
+    </h2>
+    <div class="skins-list">
+     <div class="skin-item" id="skin-0">
+      <div class="item-content">
+       <img alt="Coal Mine" src="images/CoalMine.png"/>
+       <p>
+        Coal Mine
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        0
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+0 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="0">
+       Equip
+      </button>
+     </div>
+     <div class="skin-item" id="skin-1">
+      <div class="item-content">
+       <img alt="Good Mine" src="images/GoodMine.png"/>
+       <p>
+        Good Mine
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        50
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+2 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="1">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-2">
+      <div class="item-content">
+       <img alt="Gold Mine" src="images/GoldMine.png"/>
+       <p>
+        Gold Mine
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        100
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+5 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="2">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-3">
+      <div class="item-content">
+       <img alt="Golden Oil Mine" src="images/GoldenOil.png"/>
+       <p>
+        Golden Oil Mine
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        250
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+10 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="3">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-4">
+      <div class="item-content">
+       <img alt="Oil Mine" src="images/PetrolMine.png"/>
+       <p>
+        Oil Mine
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        500
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+20 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="4">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-5">
+      <div class="item-content">
+       <img alt="Crystal Mine" src="images/CrystalMine.png"/>
+       <p>
+        Crystal Mine
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        750
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+30 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="5">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-6">
+      <div class="item-content">
+       <img alt="Diamond Mine" src="images/DiamondMine.png"/>
+       <p>
+        Diamond Mine
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        1000
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+50 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="6">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-7">
+      <div class="item-content">
+       <img alt="Magic Stone Mine" src="images/MagicStoneMine.png"/>
+       <p>
+        Magic Stone Mine
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        2500
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+100 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="7">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-8">
+      <div class="item-content">
+       <img alt="Planet Mine" src="images/PlanetMine.png"/>
+       <p>
+        Planet Mine !
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        5000
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+200 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="8">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-9">
+      <div class="item-content">
+       <img alt="BlackHole" src="images/BlackHole.png"/>
+       <p>
+        A Black Hole ??!
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        7500
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+300 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="9">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-10">
+      <div class="item-content">
+       <img alt="Multivers" src="images/Multiverse.png"/>
+       <p>
+        A MULTIVERSE ??!!!
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        10000
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+500 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="10">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-11">
+      <div class="item-content">
+       <img alt="Quantum Physics Rules" src="images/QuantumPhysicsRules.png"/>
+       <p>
+        RQuantum Physics Rules
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        20000
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+1000 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="11">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-12">
+      <div class="item-content">
+       <img alt="Sub-atomic Mine" src="images/Sub-atomicMine.png"/>
+       <p>
+        Sub-atomic Mine
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        50000
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+2500 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="12">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-13">
+      <div class="item-content">
+       <img alt="Quantum Singularity" src="images/QuantumSingularity.png"/>
+       <p>
+        Quantum Singularity
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        100000
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+5000 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="13">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-14">
+      <div class="item-content">
+       <img alt="Cosmic Anomaly" src="images/CosmicAnomaly.png"/>
+       <p>
+        C0sm1c 4n0m4ly
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        200000
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+10000 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="14">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-15">
+      <div class="item-content">
+       <img alt="Genesis" src="images/Genesis.png"/>
+       <p>
+        G3n3s1s
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        500000
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+25000 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="15">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-16">
+      <div class="item-content">
+       <img alt="Interstellar" src="images/Interstellar.png"/>
+       <p>
+        Int3rst3ll4r
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        1000000
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+50000 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="16">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-17">
+      <div class="item-content">
+       <img alt="Galactic Core" src="images/NoyauGalactic.png"/>
+       <p>
+        G4l4ct1c C0r3
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        10000000
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+500000 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="17">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-18">
+      <div class="item-content">
+       <img alt="Universe Collapse" src="images/UniverseCollapse.png"/>
+       <p>
+        Un1v3rs3 C0ll4pse
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        100000000
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+5000000 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="18">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-19">
+      <div class="item-content">
+       <img alt="Difonin" src="images/Difonin.png"/>
+       <p>
+        3&€§!@ D1F0N1N
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        1000000000
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+50000000 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="19">
+       Buy
+      </button>
+     </div>
+     <div class="skin-item" id="skin-20">
+      <div class="item-content">
+       <img alt="Dev Skin" src="images/DevSkin.png"/>
+       <p>
+        Dev Skin
+       </p>
+      </div>
+      <p>
+       Cost:
+       <span class="cost">
+        0
+       </span>
+       Coins
+      </p>
+      <p class="bonus">
+       (+1000 CPC)
+      </p>
+      <button class="skin-button" data-skin-id="20">
+       Buy
+      </button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div id="win-screen">
+   You mined the GAME !
+   <button class="game-button reset-button" id="win-screen-restart-button">
+    Reset the game
+   </button>
+  </div>
+  <!-- Custom Alert Modal / MyuMyuDevGame/DON'T COPY -->   
+  <div class="modal" id="custom-modal">
+   <div class="modal-content">
+    <h3 id="modal-title">
+    </h3>
+    <p id="modal-message">
+    </p>
+    <div class="modal-buttons">
+     <button class="modal-button confirm" id="modal-confirm-button">
+      OK
+     </button>
+     <button class="modal-button cancel" id="modal-cancel-button">
+      Cancel
+     </button>
+    </div>
+   </div>
+  </div>
+  <!-- Achievement Notification -->
+  <div id="achievement-notification">
+   Success Unlocked :
+   <span id="achievement-name">
+   </span>
+  </div>
+  <!-- Achievement Counter -->
+  <div id="achievement-counter-display">
+   Success :
+   <span id="unlocked-achievements-count">
+    0
+   </span>
+   /
+   <span id="total-achievements-count">
+    0
+   </span>
+  </div>
+  <!-- Achievements Overlay -->
+  <div id="achievements-overlay">
+   <div id="achievements-modal-content">
+    <button id="close-achievements-modal">
+     X
+    </button>
+    <h2>
+     Your Success
+    </h2>
+    <div id="achievements-list">
+     <!-- Achievements will be dynamically inserted here -->
+    </div>
+   </div>
+  </div>
+  <script>
+   /* --- JavaScript Script --- */
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Game Variables ---
+            let points = 0;
+            let pointsPerClick = 1; // Base PPC from upgrades
+            let pointsPerSecond = 0;
+            let activeSkinIndex = 0;
+            let skinPPCBonus = 0;
+
+            // Prestige Variables
+            let prestigeCount = 0;
+            let prestigeBonusPerClickMultiplier = 1;
+            const PRESTIGE_BONUS_PER_REBIRTH = 0.5;
+            const BASE_PRESTIGE_THRESHOLD = 10000;
+            const PRESTIGE_COST_MULTIPLIER = 2;
+
+            // PPC upgrades structure
+            const ppcUpgrades = [
+                {
+                    name: "Iron Pickaxe",
+                    baseCost: 10,
+                    costMultiplier: 1.15,
+                    ppcGain: 1,
+                    owned: 0,
+                    elementId: 'ppc-upgrade-0'
+                },
+                {
+                    name: "Golden Pickaxe",
+                    baseCost: 100,
+                    costMultiplier: 1.2,
+                    ppcGain: 5,
+                    owned: 0,
+                    elementId: 'ppc-upgrade-1'
+                },
+                {
+                    name: "Diamond Pickaxe",
+                    baseCost: 1000,
+                    costMultiplier: 1.25,
+                    ppcGain: 25,
+                    owned: 0,
+                    elementId: 'ppc-upgrade-2'
+                }
+            ];
+
+            // Miners structure
+            const miners = [
+                {
+                    name: "Basic Miner",
+                    baseCost: 20,
+                    costMultiplier: 1.1,
+                    basePpsGain: 1,
+                    owned: 0,
+                    upgradeCost: 100,
+                    upgradeCostMultiplier: 1.2,
+                    upgradePpsGain: 1,
+                    level: 0,
+                    elementId: 'miner-0',
+                    upgradeElementId: 'miner-upgrade-0'
+                },
+                {
+                    name: "Advanced Miner",
+                    baseCost: 200,
+                    costMultiplier: 1.12,
+                    basePpsGain: 5,
+                    owned: 0,
+                    upgradeCost: 300,
+                    upgradeCostMultiplier: 1.25,
+                    upgradePpsGain: 2,
+                    level: 0,
+                    elementId: 'miner-1',
+                    upgradeElementId: 'miner-upgrade-1'
+                },
+                {
+                    name: "Expert Miner",
+                    baseCost: 1500,
+                    costMultiplier: 1.15,
+                    basePpsGain: 20,
+                    owned: 0,
+                    upgradeCost: 2500,
+                    upgradeCostMultiplier: 1.3,
+                    upgradePpsGain: 10,
+                    level: 0,
+                    elementId: 'miner-2',
+                    upgradeElementId: 'miner-upgrade-2'
+                }
+            ];
+
+            // Skins structure - Updated costs and added new skins
+            const skins = [
+                { name: "Coal Mine", cost: 0, imageSrc: "images/CoalMine.png", ppcBonus: 0, owned: true, elementId: 'skin-0' },
+                { name: "Good Mine", cost: 50, imageSrc: "images/GoodMine.png", ppcBonus: 2, owned: false, elementId: 'skin-1' },
+                { name: "Gold Mine", cost: 100, imageSrc: "images/GoldMine.png", ppcBonus: 5, owned: false, elementId: 'skin-2' },
+                { name: "Golden Oil Mine", cost: 250, imageSrc: "images/GoldenOil.png", ppcBonus: 10, owned: false, elementId: 'skin-3' },
+                { name: "Oil Mine", cost: 500, imageSrc: "images/PetrolMine.png", ppcBonus: 20, owned: false, elementId: 'skin-4' },
+                { name: "Crystal Mine", cost: 750, imageSrc: "images/CrystalMine.png", ppcBonus: 30, owned: false, elementId: 'skin-5' },
+                { name: "Diamond Mine", cost: 1000, imageSrc: "images/DiamondMine.png", ppcBonus: 50, owned: false, elementId: 'skin-6' },
+                { name: "Magic Stone Mine", cost: 2500, imageSrc: "images/MagicStoneMine.png", ppcBonus: 100, owned: false, elementId: 'skin-7' },
+                { name: "Planet Mine!", cost: 5000, imageSrc: "images/PlanetMine.png", ppcBonus: 200, owned: false, elementId: 'skin-8' },
+                { name: "A Black Hole ??!", cost: 7500, imageSrc: "images/BlackHole.png", ppcBonus: 300, owned: false, elementId: 'skin-9' },
+                { name: "A MULTIVERSE ??!!!", cost: 10000, imageSrc: "images/Multiverse.png", ppcBonus: 500, owned: false, elementId: 'skin-10' },
+                { name: "Rules of Quantum Physics", cost: 20000, imageSrc: "images/QuantumPhysicsRules.png", ppcBonus: 1000, owned: false, elementId: 'skin-11' },
+                { name: "Sub-atomic Mine", cost: 50000, imageSrc: "images/Sub-atomicMine.png", ppcBonus: 2500, owned: false, elementId: 'skin-12' },
+                { name: "Quantum Singularity", cost: 100000, imageSrc: "images/QuantumSingularity.png", ppcBonus: 5000, owned: false, elementId: 'skin-13' },
+                { name: "C0sm1c 4n0m4ly", cost: 200000, imageSrc: "images/COsmicAnomaly.png", ppcBonus: 10000, owned: false, elementId: 'skin-14' },
+                { name: "G3n3s1s", cost: 500000, imageSrc: "images/Genesis.png", ppcBonus: 25000, owned: false, elementId: 'skin-15' },
+                { name: "Interstellar", cost: 1000000, imageSrc: "images/Interstellar.png", ppcBonus: 50000, owned: false, elementId: 'skin-16' },
+                { name: "Galactic Core", cost: 10000000, imageSrc: "images/NoyauGalactic.png", ppcBonus: 500000, owned: false, elementId: 'skin-17' },
+                { name: "Universe Collapse", cost: 100000000, imageSrc: "images/UniverseCollapse.png", ppcBonus: 5000000, owned: false, elementId: 'skin-18' },
+                { name: "3§!€ùé@ D1F0N1N", cost: 1000000000, imageSrc: "images/Difonin.png", ppcBonus: 50000000, owned: false, elementId: 'skin-19' }, // Win condition skin
+                { name: "Dev Skin", cost: 0, imageSrc: "images/DevSkin.png", ppcBonus: 1000, owned: false, elementId: 'skin-20', isChestItem: true }
+            ];
+
+            // Chests configuration (Pets removed from chests)
+            const chests = [
+                {
+                    id: 0,
+                    name: "Common Chest",
+                    cost: 500,
+                    imageSrc: "images/CommonChest.png",
+                    probabilities: {
+                        advancedMinerBonus: 40,
+                        devSkin: 30,
+                        manager: 30
+                    },
+                    elementId: 'chest-0'
+                },
+                {
+                    id: 1,
+                    name: "Rare Chest",
+                    cost: 2500,
+                    imageSrc: "images/RareChest.png",
+                    probabilities: {
+                        advancedMinerBonus: 30,
+                        devSkin: 35,
+                        manager: 35
+                    },
+                    elementId: 'chest-1'
+                },
+                {
+                    id: 2,
+                    name: "Epic Chest",
+                    cost: 10000,
+                    imageSrc: "images/EpicChest.png",
+                    probabilities: {
+                        advancedMinerBonus: 20,
+                        devSkin: 30,
+                        manager: 50
+                    },
+                    elementId: 'chest-2'
+                },
+                {
+                    id: 3,
+                    name: "Legendary Chest",
+                    cost: 50000,
+                    imageSrc: "images/LegendaryChest.png",
+                    probabilities: {
+                        advancedMinerBonus: 10,
+                        devSkin: 20,
+                        manager: 70
+                    },
+                    elementId: 'chest-3'
+                }
+            ];
+
+            // Inventory for chest items (Pets removed, now in pet shop)
+            const inventory = {
+                advancedMinerBonus: {
+                    name: "Bonus Advanced Miner",
+                    description: "Miner are mor effective .",
+                    imageSrc: "images/Upgrade.png",
+                    count: 0,
+                    elementId: 'item-advanced-miner-bonus'
+                },
+                devSkin: {
+                    name: "Dev Skin",
+                    description: "Unlock the 'Dev Skin' (+1,000 CPC).",
+                    imageSrc: "images/DevSkin.png",
+                    count: 0,
+                    elementId: 'item-dev-skin'
+                },
+                manager: {
+                    name: "Manager",
+                    description: "All miners take +10% bonus (cumulative).",
+                    imageSrc: "images/Manager.png",
+                    count: 0,
+                    elementId: 'item-manager',
+                    effectMultiplier: 0.10
+
+                }
+            };
+
+            // NEW: Pets configuration for Pet Shop
+            const pets = [
+                {
+                    id: 0,
+                    name: "Chat",
+                    cost: 1000,
+                    imageSrc: "images/Cat.png",
+                    ppcMultiplier: 0.30, // +30% PPC
+                    ppsMultiplier: 0,
+                    owned: false,
+                    elementId: 'pet-0'
+                },
+                {
+                    id: 1,
+                    name: "Chien",
+                    cost: 2500,
+                    imageSrc: "images/Dog.png",
+                    ppcMultiplier: 0,
+                    ppsMultiplier: 0.20, // +20% PPS
+                    owned: false,
+                    elementId: 'pet-1'
+                },
+                {
+                    id: 2,
+                    name: "Oiseau",
+                    cost: 1500,
+                    imageSrc: "images/Bird.png",
+                    ppcMultiplier: 0.10, // +10% PPC
+                    ppsMultiplier: 0,
+                    owned: false,
+                    elementId: 'pet-2'
+                },
+                {
+                    id: 3,
+                    name: "Renard",
+                    cost: 3000,
+                    imageSrc: "images/Fox.png",
+                    ppcMultiplier: 0,
+                    ppsMultiplier: 0.15, // +15% PPS
+                    owned: false,
+                    elementId: 'pet-3'
+                }
+            ];
+
+            // NEW: Achievements configuration
+            const achievements = [
+                { id: 'firstClick', name: 'First Click', description: 'Click for the First Time.', unlocked: false, condition: () => points > 0 },
+                { id: 'tenMiners', name: 'Miners Army', description: 'Have 10 miners (basic or advanced).', unlocked: false, condition: () => miners.reduce((sum, m) => sum + m.owned, 0) >= 10 },
+                { id: 'thousandPoints', name: 'Thousand', description: 'Win 1 000 coins.', unlocked: false, condition: () => points >= 1000 },
+                { id: 'allPets', name: 'Friend of Pets', description: 'Have all Pets.', unlocked: false, condition: () => pets.every(p => p.owned) },
+                { id: 'secretCode', name: 'Code Master', description: 'Enter secret code.', unlocked: false, condition: () => false }, // Condition set by Konami code
+                { id: 'firstPrestige', name: 'Rebirth', description: 'Do the first Prestige.', unlocked: false, condition: () => prestigeCount >= 1 },
+                { id: 'fivePrestiges', name: 'Prestige Master', description: 'Do 5 Prestiges.', unlocked: false, condition: () => prestigeCount >= 5 },
+                { id: 'millionPoints', name: 'Millionnaire', description: 'Have 1 000 000 coins.', unlocked: false, condition: () => points >= 1000000 },
+                { id: 'hundredMiners', name: 'Legion of Miner', description: 'Have 100 miners (basic or advanced).', unlocked: false, condition: () => miners.reduce((sum, m) => sum + m.owned, 0) >= 100 },
+                { id: 'devSkinUnlocked', name: 'Hiden Dev', description: 'Unlock The Dev Skin.', unlocked: false, condition: () => skins.find(s => s.name === "Dev Skin").owned },
+                { id: 'difoninSkinUnlocked', name: 'The End ?', description: 'Unlock the skin 3§!€ùé@ D1F0N1N.', unlocked: false, condition: () => skins.find(s => s.name === "3§!€ùé@ D1F0N1N").owned }
+            ];
+
+
+            // --- DOM Element References ---
+            const pointsDisplay = document.getElementById('points-display');
+            const ppcDisplay = document.getElementById('ppc-display');
+            const ppsDisplay = document.getElementById('pps-display');
+            const prestigeCountDisplay = document.getElementById('prestige-count-display');
+            const prestigeBonusDisplay = document.getElementById('prestige-bonus-display');
+            const clickButton = document.getElementById('click-button');
+            const clickerImage = document.getElementById('clicker-image');
+            const resetButton = document.getElementById('reset-button');
+            const prestigeButton = document.getElementById('prestige-button');
+            const mainContentWrapper = document.querySelector('.main-content-wrapper');
+            const winScreen = document.getElementById('win-screen');
+            const winScreenRestartButton = document.getElementById('win-screen-restart-button');
+
+            // Custom Modal Elements
+            const customModal = document.getElementById('custom-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalMessage = document.getElementById('modal-message');
+            const modalConfirmButton = document.getElementById('modal-confirm-button');
+            const modalCancelButton = document.getElementById('modal-cancel-button');
+
+            // Achievement Notification Elements
+            const achievementNotification = document.getElementById('achievement-notification');
+            const achievementNameDisplay = document.getElementById('achievement-name');
+
+            // Achievement Counter Elements
+            const achievementCounterDisplay = document.getElementById('achievement-counter-display');
+            const unlockedAchievementsCount = document.getElementById('unlocked-achievements-count');
+            const totalAchievementsCount = document.getElementById('total-achievements-count');
+
+            // Achievements Overlay Elements
+            const achievementsOverlay = document.getElementById('achievements-overlay');
+            const achievementsListDiv = document.getElementById('achievements-list');
+            const closeAchievementsModalButton = document.getElementById('close-achievements-modal');
+
+
+            // Dev Mode variables
+            let devModeKeyBuffer = '';
+            const DEV_MODE_CODE = 'bonjour';
+            const DEV_MODE_POINTS_GRANT = 2000000;
+
+            // NEW: Konami Code Easter Egg
+            let konamiCodeBuffer = '';
+            const KONAMI_CODE = 'upupdowndownleftrightleftrightba';
+            const KONAMI_CODE_BONUS_POINTS = 50000;
+
+            // --- Game Functions ---
+
+            // Custom Alert/Confirm function
+            function showAlert(message, title = "Message", isConfirm = false) {
+                return new Promise((resolve) => {
+                    modalTitle.textContent = title;
+                    modalMessage.textContent = message;
+                    customModal.style.display = 'flex'; // Use flex to center
+
+                    modalConfirmButton.textContent = isConfirm ? "Confirm" : "OK";
+                    modalCancelButton.style.display = isConfirm ? 'inline-block' : 'none';
+
+                    const confirmHandler = () => {
+                        customModal.style.display = 'none';
+                        modalConfirmButton.removeEventListener('click', confirmHandler);
+                        modalCancelButton.removeEventListener('click', cancelHandler);
+                        resolve(true);
+                    };
+
+                    const cancelHandler = () => {
+                        customModal.style.display = 'none';
+                        modalConfirmButton.removeEventListener('click', confirmHandler);
+                        modalCancelButton.removeEventListener('click', cancelHandler);
+                        resolve(false);
+                    };
+
+                    modalConfirmButton.addEventListener('click', confirmHandler);
+                    modalCancelButton.addEventListener('click', cancelHandler);
+                });
+            }
+
+            // Function to calculate exponential cost
+            function getUpgradeCost(baseCost, ownedCount, multiplier) {
+                return Math.floor(baseCost * Math.pow(multiplier, ownedCount));
+            }
+
+            // Function to get current prestige cost
+            function getPrestigeCost() {
+                return Math.floor(BASE_PRESTIGE_THRESHOLD * Math.pow(PRESTIGE_COST_MULTIPLIER, prestigeCount));
+            }
+
+            // Function to calculate the actual PPC including all bonuses
+            function getActualPPC() {
+                let actualPPC = pointsPerClick + skinPPCBonus; // Base PPC from upgrades + skin bonus
+
+                // Apply prestige bonus
+                actualPPC *= prestigeBonusPerClickMultiplier;
+
+                // Apply pet PPC bonuses
+                pets.filter(p => p.owned && p.ppcMultiplier > 0).forEach(pet => {
+                    actualPPC *= (1 + pet.ppcMultiplier); // Apply as multiplier (e.g., 1.3 for +30%)
+                });
+
+                return Math.floor(actualPPC);
+            }
+
+            function updateDisplay() {
+                pointsDisplay.textContent = points.toFixed(0);
+                ppcDisplay.textContent = getActualPPC();
+                ppsDisplay.textContent = pointsPerSecond;
+                prestigeCountDisplay.textContent = prestigeCount;
+                prestigeBonusDisplay.textContent = `${(prestigeBonusPerClickMultiplier * 100 - 100).toFixed(1)}%`;
+
+                // Update display for PPC upgrades
+                ppcUpgrades.forEach((upgrade) => {
+                    const upgradeElement = document.getElementById(upgrade.elementId);
+                    if (upgradeElement) {
+                        upgradeElement.querySelector('.cost').textContent = getUpgradeCost(upgrade.baseCost, upgrade.owned, upgrade.costMultiplier);
+                        upgradeElement.querySelector('.owned').textContent = upgrade.owned;
+                    }
+                });
+
+                // Update display for miners and their upgrades
+                miners.forEach((miner) => {
+                    const minerElement = document.getElementById(miner.elementId);
+                    if (minerElement) {
+                        minerElement.querySelector('.cost').textContent = getUpgradeCost(miner.baseCost, miner.owned, miner.costMultiplier);
+                        minerElement.querySelector('.owned').textContent = miner.owned;
+                    }
+                    const upgradeElement = document.getElementById(miner.upgradeElementId);
+                    if (upgradeElement) {
+                        upgradeElement.querySelector('.cost').textContent = getUpgradeCost(miner.upgradeCost, miner.level, miner.upgradeCostMultiplier);
+                        upgradeElement.querySelector('.level').textContent = miner.level;
+                    }
+                });
+
+                // Update display for skins
+                skins.forEach((skin, index) => {
+                    const skinElement = document.getElementById(skin.elementId);
+                    if (skinElement) {
+                        const button = skinElement.querySelector('.skin-button');
+                        skinElement.querySelector('.cost').textContent = skin.cost;
+                        skinElement.querySelector('.bonus').textContent = `(+${skin.ppcBonus} PPC)`;
+
+                        if (skin.owned) {
+                            button.textContent = (index === activeSkinIndex) ? "Équipé" : "Equip";
+                            button.disabled = (index === activeSkinIndex);
+                            button.classList.toggle('active', (index === activeSkinIndex));
+                        } else {
+                            if (skin.isChestItem) {
+                                button.textContent = "Chest Reward";
+                                button.disabled = true;
+                                button.classList.remove('active');
+                            } else {
+                                button.textContent = `Buy`;
+                                button.disabled = (points < skin.cost);
+                                if (index > 0 && !skins[index - 1].owned) {
+                                    button.disabled = true;
+                                }
+                                button.classList.remove('active');
+                            }
+                        }
+                    }
+                });
+
+                // Update display for chests
+                chests.forEach(chest => {
+                    const chestElement = document.getElementById(chest.elementId);
+                    if (chestElement) {
+                        const button = chestElement.querySelector('.chest-button');
+                        chestElement.querySelector('.cost').textContent = chest.cost;
+                        button.disabled = (points < chest.cost);
+                    }
+                });
+
+                // Update display for inventory items
+                for (const itemId in inventory) {
+                    const item = inventory[itemId];
+                    const itemElement = document.getElementById(item.elementId);
+                    if (itemElement) {
+                        itemElement.querySelector('.count').textContent = item.count;
+                        itemElement.querySelector('.item-description').textContent = item.description;
+                    }
+                }
+
+                // NEW: Update display for pets
+                pets.forEach(pet => {
+                    const petElement = document.getElementById(pet.elementId);
+                    if (petElement) {
+                        const button = petElement.querySelector('.pet-button');
+                        petElement.querySelector('.cost').textContent = pet.cost;
+                        if (pet.owned) {
+                            button.textContent = "Owned";
+                            button.disabled = true;
+                            button.classList.add('active');
+                        } else {
+                            button.textContent = "Buy";
+                            button.disabled = (points < pet.cost);
+                            button.classList.remove('active');
+                        }
+                    }
+                });
+
+                // Update prestige button state
+                const currentPrestigeCost = getPrestigeCost();
+                if (points >= currentPrestigeCost) {
+                    prestigeButton.disabled = false;
+                    prestigeButton.textContent = `Prestige! (Win +${(PRESTIGE_BONUS_PER_REBIRTH * 100).toFixed(1)}% CPC permanent bonus !) - Cost: ${currentPrestigeCost} coins`;
+                } else {
+                    prestigeButton.disabled = true;
+                    prestigeButton.textContent = `Prestige! (Need ${currentPrestigeCost} coins)`;
+                }
+
+                // Update achievement counter
+                const unlocked = achievements.filter(a => a.unlocked).length;
+                unlockedAchievementsCount.textContent = unlocked;
+                totalAchievementsCount.textContent = achievements.length;
+            }
+
+            function updateButtonStates() {
+                // For each buy button (upgrades/miners)
+                document.querySelectorAll('.buy-button').forEach(button => {
+                    const upgradeType = button.dataset.upgradeType;
+                    let currentCost = 0;
+
+                    if (upgradeType === 'ppc-upgrade') {
+                        const upgradeId = parseInt(button.dataset.upgradeId);
+                        const upgrade = ppcUpgrades[upgradeId];
+                        currentCost = getUpgradeCost(upgrade.baseCost, upgrade.owned, upgrade.costMultiplier);
+                    } else if (upgradeType === 'miner') {
+                        const minerIndex = parseInt(button.dataset.minerIndex);
+                        const miner = miners[minerIndex];
+                        currentCost = getUpgradeCost(miner.baseCost, miner.owned, miner.costMultiplier);
+                    } else if (upgradeType === 'miner-upgrade') {
+                        const minerIndex = parseInt(button.dataset.minerIndex);
+                        const miner = miners[minerIndex];
+                        currentCost = getUpgradeCost(miner.upgradeCost, miner.level, miner.upgradeCostMultiplier);
+                    }
+
+                    button.disabled = (points < currentCost);
+                });
+
+                // For each skin button
+                document.querySelectorAll('.skin-button').forEach(button => {
+                    const skinId = parseInt(button.dataset.skinId);
+                    const skin = skins[skinId];
+
+                    if (skin.owned) {
+                        button.disabled = (skinId === activeSkinIndex);
+                        button.classList.toggle('active', (skinId === activeSkinIndex));
+                    } else {
+                        if (skin.isChestItem) {
+                            button.disabled = true;
+                        } else {
+                            button.disabled = (points < skin.cost);
+                            if (skinId > 0 && !skins[skinId - 1].owned) {
+                                button.disabled = true;
+                            }
+                        }
+                        button.classList.remove('active');
+                    }
+                });
+
+                // For each chest button
+                document.querySelectorAll('.chest-button').forEach(button => {
+                    const chestId = parseInt(button.dataset.chestId);
+                    const chest = chests[chestId];
+                    button.disabled = (points < chest.cost);
+                });
+
+                // NEW: For each pet button
+                document.querySelectorAll('.pet-button').forEach(button => {
+                    const petId = parseInt(button.dataset.petId);
+                    const pet = pets[petId];
+                    if (pet.owned) {
+                        button.disabled = true;
+                        button.classList.add('active');
+                    } else {
+                        button.disabled = (points < pet.cost);
+                        button.classList.remove('active');
+                    }
+                });
+
+                // Update prestige button state
+                const currentPrestigeCost = getPrestigeCost();
+                prestigeButton.disabled = (points < currentPrestigeCost);
+            }
+
+            // Function to apply a skin
+            function applySkin(skinIndex) {
+                activeSkinIndex = skinIndex;
+                clickerImage.src = skins[activeSkinIndex].imageSrc;
+                skinPPCBonus = skins[activeSkinIndex].ppcBonus;
+                updateDisplay();
+                saveGame();
+
+                // Check if the Difonin skin (index 19) has been equipped to trigger the win condition
+                const DIFONIN_SKIN_INDEX = 19;
+                if (activeSkinIndex === DIFONIN_SKIN_INDEX) {
+                    mainContentWrapper.style.display = 'none';
+                    winScreen.style.display = 'flex';
+                    // Unlock achievement for Difonin skin
+                    const difoninAchievement = achievements.find(a => a.id === 'difoninSkinUnlocked');
+                    if (difoninAchievement && !difoninAchievement.unlocked) {
+                        unlockAchievement('difoninSkinUnlocked');
+                    }
+                }
+            }
+
+            clickButton.addEventListener('click', () => {
+                points += getActualPPC();
+                updateDisplay();
+                updateButtonStates();
+                saveGame();
+                // Check 'First Click' achievement
+                const firstClickAch = achievements.find(a => a.id === 'firstClick');
+                if (firstClickAch && !firstClickAch.unlocked && firstClickAch.condition()) {
+                    unlockAchievement('firstClick');
+                }
+            });
+
+            // Handle clicks on all buy buttons (upgrades/miners)
+            document.querySelectorAll('.buy-button').forEach(button => {
+                button.addEventListener('click', async () => { // Made async for showAlert
+                    const upgradeType = button.dataset.upgradeType;
+                    let costToPay = 0;
+
+                    if (upgradeType === 'ppc-upgrade') {
+                        const upgradeId = parseInt(button.dataset.upgradeId);
+                        const upgrade = ppcUpgrades[upgradeId];
+                        costToPay = getUpgradeCost(upgrade.baseCost, upgrade.owned, upgrade.costMultiplier);
+
+                        if (points >= costToPay) {
+                            points -= costToPay;
+                            upgrade.owned++;
+                            pointsPerClick += upgrade.ppcGain;
+                        } else {
+                            await showAlert("Not enough coins !");
+                        }
+
+                    } else if (upgradeType === 'miner') {
+                        const minerIndex = parseInt(button.dataset.minerIndex);
+                        const miner = miners[minerIndex];
+                        costToPay = getUpgradeCost(miner.baseCost, miner.owned, miner.costMultiplier);
+
+                        if (points >= costToPay) {
+                            points -= costToPay;
+                            miner.owned++;
+                            calculatePps();
+                        } else {
+                            await showAlert("Not enough coins !");
+                        }
+
+                    } else if (upgradeType === 'miner-upgrade') {
+                        const minerIndex = parseInt(button.dataset.minerIndex);
+                        const miner = miners[minerIndex];
+                        costToPay = getUpgradeCost(miner.upgradeCost, miner.level, miner.upgradeCostMultiplier);
+
+                        if (points >= costToPay) {
+                            points -= costToPay;
+                            miner.level++;
+                            calculatePps();
+                        } else {
+                            await showAlert("Not enough coins !");
+                        }
+                    }
+
+                    updateDisplay();
+                    updateButtonStates();
+                    saveGame();
+                });
+            });
+
+            // Handle clicks on skin buttons
+            document.querySelectorAll('.skin-button').forEach(button => {
+                button.addEventListener('click', async () => { // Made async for showAlert
+                    const skinId = parseInt(button.dataset.skinId);
+                    const skin = skins[skinId];
+
+                    if (skin.isChestItem && !skin.owned) {
+                         await showAlert("Just in Chests !");
+                         return;
+                    }
+
+                    if (skinId > 0 && !skins[skinId - 1].owned && !skin.isChestItem) {
+                        await showAlert("You have to buy the precedent skin !");
+                        return;
+                    }
+
+                    if (skin.owned) {
+                        applySkin(skinId);
+                    } else {
+                        if (points >= skin.cost) {
+                            points -= skin.cost;
+                            skin.owned = true;
+                            applySkin(skinId);
+                        } else {
+                            await showAlert("Not enough coins !");
+                        }
+                    }
+                    updateDisplay();
+                    updateButtonStates();
+                    saveGame();
+                });
+            });
+
+            // Handle clicks on chest buttons
+            document.querySelectorAll('.chest-button').forEach(button => {
+                button.addEventListener('click', async () => { // Made async for showAlert
+                    const chestId = parseInt(button.dataset.chestId);
+                    const chest = chests[chestId];
+
+                    if (points >= chest.cost) {
+                        points -= chest.cost;
+                        openChest(chest);
+                    } else {
+                        await showAlert("Not enogh coins !");
+                    }
+                    updateDisplay();
+                    updateButtonStates();
+                    saveGame();
+                });
+            });
+
+            // NEW: Handle clicks on pet buttons
+            document.querySelectorAll('.pet-button').forEach(button => {
+                button.addEventListener('click', async () => { // Made async for showAlert
+                    const petId = parseInt(button.dataset.petId);
+                    const pet = pets[petId];
+
+                    if (pet.owned) {
+                        await showAlert("You early have this pet !");
+                        return;
+                    }
+
+                    if (points >= pet.cost) {
+                        points -= pet.cost;
+                        pet.owned = true;
+                        calculatePps(); // Recalculate PPS as pet might affect it
+                        updateDisplay();
+                        updateButtonStates();
+                        saveGame();
+                        await showAlert(`You buy a ${pet.name} ! Effect: ${pet.ppcMultiplier > 0 ? '+' + (pet.ppcMultiplier * 100) + '% CPC' : '+' + (pet.ppsMultiplier * 100) + '% CPS'}`);
+                    } else {
+                        await showAlert("Not enough coins !");
+                    }
+                });
+            });
+
+            // Function to open a chest
+            async function openChest(chest) { // Made async for showAlert
+                const rand = Math.random() * 100;
+                let cumulativeProbability = 0;
+                let foundItem = null;
+
+                const items = [
+                    { name: 'manager', prob: chest.probabilities.manager, type: 'manager' },
+                    { name: 'devSkin', prob: chest.probabilities.devSkin, type: 'skin' },
+                    { name: 'advancedMinerBonus', prob: chest.probabilities.advancedMinerBonus, type: 'bonus' }
+                ];
+
+                items.sort((a, b) => b.prob - a.prob);
+
+                for (const item of items) {
+                    cumulativeProbability += item.prob;
+                    if (rand < cumulativeProbability) {
+                        foundItem = item;
+                        break;
+                    }
+                }
+
+                if (foundItem) {
+                    let message = `You won : `;
+                    if (foundItem.type === 'manager') {
+                        inventory.manager.count++;
+                        calculatePps();
+                        message += `A Manager ! (+10% efficacity per miner)`;
+                    } else if (foundItem.type === 'skin') {
+                        const devSkin = skins.find(s => s.name === "Dev Skin");
+                        if (devSkin && !devSkin.owned) {
+                            devSkin.owned = true;
+                            message += `The Dev Skin ! (+${devSkin.ppcBonus} CPC)`;
+                            inventory.devSkin.count++;
+                            // Unlock dev skin achievement
+                            const devSkinAch = achievements.find(a => a.id === 'devSkinUnlocked');
+                            if (devSkinAch && !devSkinAch.unlocked) {
+                                unlockAchievement('devSkinUnlocked');
+                            }
+                        } else if (devSkin && devSkin.owned) {
+                            message += ` Dev Skin (early have)`;
+                            points += chest.cost * 0.2;
+                            message += ` (so: ${Math.floor(chest.cost * 0.2)} points)`;
+                        }
+                    } else if (foundItem.type === 'bonus') {
+                        inventory.advancedMinerBonus.count++;
+                        calculatePps();
+                        message += `Advanced Miner Bonus ! (+5 CPS per Advanced Miner)`;
+                    }
+                    await showAlert(message);
+                } else {
+                    await showAlert("Nothing... (It's not normal...)");
+                }
+            }
+
+
+            // Prestige Button Event Listener
+            prestigeButton.addEventListener('click', async () => { // Made async for showAlert
+                const currentPrestigeCost = getPrestigeCost();
+                if (points >= currentPrestigeCost) {
+                    const confirmed = await showAlert(`Are you sure to do it ? You're going to win +${(PRESTIGE_BONUS_PER_REBIRTH * 100).toFixed(1)}% to your CPC ! Cost: ${currentPrestigeCost} coins.`, "Confirm Prestige", true);
+                    if (confirmed) {
+                        doRebirth();
+                    }
+                } else {
+                    await showAlert(`You need ${currentPrestigeCost} !`);
+                }
+            });
+
+            function doRebirth() {
+                prestigeCount++;
+                prestigeBonusPerClickMultiplier += PRESTIGE_BONUS_PER_REBIRTH;
+
+                points = 0;
+                pointsPerClick = 1;
+                pointsPerSecond = 0;
+                skinPPCBonus = 0;
+
+                miners.forEach(miner => {
+                    miner.owned = 0;
+                    miner.level = 0;
+                });
+
+                ppcUpgrades.forEach(upgrade => {
+                    upgrade.owned = 0;
+                });
+
+                // Reset skins (keep only the first one owned), but preserve chest-obtained skins
+                skins.forEach((skin, index) => {
+                    if (skin.isChestItem) {
+                        if (skin.name === "Dev Skin") {
+                             skin.owned = inventory.devSkin.count > 0;
+                        }
+                    } else {
+                        skin.owned = (index === 0);
+                    }
+                });
+                activeSkinIndex = 0;
+                clickerImage.src = skins[activeSkinIndex].imageSrc;
+                skinPPCBonus = skins[activeensiveSkinIndex].ppcBonus;
+
+                // Reset pets (keep owned status, but reset any temporary effects if they had any)
+                // Since pet effects are based on their 'owned' status and not a 'count', this is fine.
+
+                pointsPerClick = 1;
+                ppcUpgrades.forEach(upgrade => {
+                    pointsPerClick += upgrade.owned * upgrade.ppcGain;
+                });
+
+                calculatePps();
+                saveGame();
+                updateDisplay();
+                updateButtonStates();
+                // Check prestige achievements
+                if (prestigeCount === 1) {
+                    unlockAchievement('firstPrestige');
+                }
+                if (prestigeCount === 5) {
+                    unlockAchievement('fivePrestiges');
+                }
+                showAlert(`You have now ${prestigeCount} Prestige with +${(prestigeBonusPerClickMultiplier * 100 - 100).toFixed(1)}% CPC !`);
+            }
+
+            // Centralized Game Reset Function
+            async function doResetGame() { // Made async for showAlert
+                points = 0;
+                pointsPerClick = 1;
+                pointsPerSecond = 0;
+                prestigeCount = 0;
+                prestigeBonusPerClickMultiplier = 1;
+                skinPPCBonus = 0;
+
+                miners.forEach(miner => {
+                    miner.owned = 0;
+                    miner.level = 0;
+                });
+
+                ppcUpgrades.forEach(upgrade => {
+                    upgrade.owned = 0;
+                });
+
+                skins.forEach((skin, index) => {
+                    skin.owned = (index === 0);
+                });
+                activeSkinIndex = 0;
+                clickerImage.src = skins[activeSkinIndex].imageSrc;
+
+                for (const itemId in inventory) {
+                    inventory[itemId].count = 0;
+                }
+
+                // Reset pets owned status
+                pets.forEach(pet => {
+                    pet.owned = false;
+                });
+
+                // Reset achievements
+                achievements.forEach(ach => {
+                    ach.unlocked = false;
+                });
+
+                pointsPerClick = 1;
+                ppcUpgrades.forEach(upgrade => {
+                    pointsPerClick += upgrade.owned * upgrade.ppcGain;
+                });
+
+                calculatePps();
+                localStorage.removeItem('clickerGameData');
+
+                winScreen.style.display = 'none';
+                mainContentWrapper.style.display = 'flex';
+
+                updateDisplay();
+                updateButtonStates();
+                await showAlert("The game was all reset !");
+            }
+
+            resetButton.addEventListener('click', async () => { // Made async for showAlert
+                const confirmed = await showAlert("Are you sure to reset ?", true);
+                if (confirmed) {
+                    doResetGame();
+                }
+            });
+
+            winScreenRestartButton.addEventListener('click', () => {
+                doResetGame();
+            });
+
+
+            function calculatePps() {
+                let totalPps = 0;
+                let minerEfficiencyBonus = 1;
+
+                if (inventory.manager.count > 0) {
+                    minerEfficiencyBonus = 1 + (inventory.manager.effectMultiplier * inventory.manager.count);
+                }
+
+                miners.forEach(miner => {
+                    totalPps += (miner.basePpsGain + (miner.level * miner.upgradePpsGain)) * miner.owned;
+                    if (miner.name === "Advanced Miner" && inventory.advancedMinerBonus.count > 0) {
+                        totalPps += (5 * inventory.advancedMinerBonus.count) * miner.owned;
+                    }
+                });
+
+                totalPps *= minerEfficiencyBonus;
+
+                // Apply pet PPS bonuses
+                pets.filter(p => p.owned && p.ppsMultiplier > 0).forEach(pet => {
+                    totalPps *= (1 + pet.ppsMultiplier); // Apply as multiplier
+                });
+
+                pointsPerSecond = totalPps;
+
+                if (pointsPerSecond > 0) {
+                    clickButton.classList.add('auto-clicking');
+                } else {
+                    clickButton.classList.remove('auto-clicking');
+                }
+            }
+
+            function saveGame() {
+                const gameData = {
+                    points: points,
+                    pointsPerClick: pointsPerClick,
+                    miners: miners,
+                    ppcUpgrades: ppcUpgrades,
+                    skins: skins,
+                    activeSkinIndex: activeSkinIndex,
+                    skinPPCBonus: skinPPCBonus,
+                    prestigeCount: prestigeCount,
+                    prestigeBonusPerClickMultiplier: prestigeBonusPerClickMultiplier,
+                    inventory: inventory,
+                    pets: pets, // NEW: Save pets data
+                    achievements: achievements // NEW: Save achievements data
+                };
+                localStorage.setItem('clickerGameData', JSON.stringify(gameData));
+            }
+
+            function loadGame() {
+                const savedData = localStorage.getItem('clickerGameData');
+                if (savedData) {
+                    const gameData = JSON.parse(savedData);
+                    points = gameData.points;
+                    pointsPerClick = gameData.pointsPerClick;
+
+                    gameData.miners.forEach((savedMiner, index) => {
+                        if (miners[index]) {
+                            miners[index].owned = savedMiner.owned;
+                            miners[index].level = savedMiner.level;
+                        }
+                    });
+
+                    if (gameData.ppcUpgrades) {
+                        gameData.ppcUpgrades.forEach((savedUpgrade, index) => {
+                            if (ppcUpgrades[index]) {
+                                ppcUpgrades[index].owned = savedUpgrade.owned;
+                            }
+                        });
+                    }
+
+                    if (gameData.skins) {
+                        gameData.skins.forEach((savedSkin, index) => {
+                            if (skins[index]) {
+                                skins[index].owned = savedSkin.owned;
+                                skins[index].ppcBonus = savedSkin.ppcBonus !== undefined ? savedSkin.ppcBonus : skins[index].ppcBonus;
+                                skins[index].isChestItem = savedSkin.isChestItem !== undefined ? savedSkin.isChestItem : skins[index].isChestItem;
+                            }
+                        });
+                    }
+
+                    if (gameData.inventory) {
+                        for (const itemId in gameData.inventory) {
+                            if (inventory[itemId]) {
+                                inventory[itemId].count = gameData.inventory[itemId].count;
+                            }
+                        }
+                    }
+
+                    // NEW: Load pets
+                    if (gameData.pets) {
+                        gameData.pets.forEach((savedPet, index) => {
+                            if (pets[index]) {
+                                pets[index].owned = savedPet.owned;
+                            }
+                        });
+                    }
+
+                    // NEW: Load achievements
+                    if (gameData.achievements) {
+                        gameData.achievements.forEach((savedAch, index) => {
+                            if (achievements[index]) {
+                                achievements[index].unlocked = savedAch.unlocked;
+                            }
+                        });
+                    }
+
+
+                    if (gameData.prestigeCount !== undefined) {
+                        prestigeCount = gameData.prestigeCount;
+                    }
+                    if (gameData.prestigeBonusPerClickMultiplier !== undefined) {
+                        prestigeBonusPerClickMultiplier = gameData.prestigeBonusPerClickMultiplier;
+                    }
+
+                    if (gameData.activeSkinIndex !== undefined) {
+                        activeSkinIndex = gameData.activeSkinIndex;
+                        clickerImage.src = skins[activeSkinIndex].imageSrc;
+                        skinPPCBonus = skins[activeSkinIndex].ppcBonus;
+                    } else {
+                        activeSkinIndex = 0;
+                        clickerImage.src = skins[0].imageSrc;
+                        skinPPCBonus = skins[0].ppcBonus;
+                    }
+
+                    // Check if the win condition was met on previous load and show win screen
+                    const difoninSkin = skins.find(s => s.name === "3§!€ùé@ D1F0N1N");
+                    if (difoninSkin && difoninSkin.owned && activeSkinIndex === skins.indexOf(difoninSkin)) {
+                        mainContentWrapper.style.display = 'none';
+                        winScreen.style.display = 'flex';
+                    }
+
+                    calculatePps();
+                    updateDisplay();
+                    updateButtonStates();
+                } else {
+                    activeSkinIndex = 0;
+                    clickerImage.src = skins[0].imageSrc;
+                    skinPPCBonus = skins[0].ppcBonus;
+
+                    prestigeCount = 0;
+                    prestigeBonusPerClickMultiplier = 1;
+                    for (const itemId in inventory) {
+                        inventory[itemId].count = 0;
+                    }
+                    pets.forEach(pet => {
+                        pet.owned = false;
+                    });
+                    achievements.forEach(ach => {
+                        ach.unlocked = false;
+                    });
+                }
+            }
+
+            // Dev Mode Key Listener
+            document.addEventListener('keydown', async (event) => { // Made async for showAlert
+                const key = event.key.toLowerCase();
+                devModeKeyBuffer += key;
+
+                if (devModeKeyBuffer.length > DEV_MODE_CODE.length) {
+                    devModeKeyBuffer = devModeKeyBuffer.slice(-DEV_MODE_CODE.length);
+                }
+
+                if (devModeKeyBuffer === DEV_MODE_CODE) {
+                    points += DEV_MODE_POINTS_GRANT;
+                    await showAlert(`Mode Dev activé ! Vous avez gagné ${DEV_MODE_POINTS_GRANT} points !`);
+                    updateDisplay();
+                    updateButtonStates();
+                    saveGame();
+                    devModeKeyBuffer = '';
+                }
+
+                // NEW: Konami Code Easter Egg Listener
+                konamiCodeBuffer += key;
+                if (konamiCodeBuffer.length > KONAMI_CODE.length) {
+                    konamiCodeBuffer = konamiCodeBuffer.slice(-KONAMI_CODE.length);
+                }
+
+                if (konamiCodeBuffer === KONAMI_CODE) {
+                    points += KONAMI_CODE_BONUS_POINTS;
+                    await showAlert(`Code Konami actived ! You won ${KONAMI_CODE_BONUS_POINTS} points !`);
+                    unlockAchievement('secretCode'); // Unlock secret code achievement
+                    updateDisplay();
+                    updateButtonStates();
+                    saveGame();
+                    konamiCodeBuffer = '';
+                }
+            });
+
+            // Interval for points per second
+            setInterval(() => {
+                points += pointsPerSecond;
+                updateDisplay();
+                updateButtonStates();
+            }, 1000);
+
+            // NEW: Achievement checking interval
+            setInterval(() => {
+                checkAchievements();
+            }, 2000); // Check every 2 seconds
+
+            // NEW: Achievement functions
+            function unlockAchievement(id) {
+                const achievement = achievements.find(ach => ach.id === id);
+                if (achievement && !achievement.unlocked) {
+                    achievement.unlocked = true;
+                    showAchievementNotification(achievement.name);
+                    saveGame();
+                    updateDisplay(); // Update achievement counter
+                }
+            }
+
+            function showAchievementNotification(name) {
+                achievementNameDisplay.textContent = name;
+                achievementNotification.classList.add('show');
+                setTimeout(() => {
+                    achievementNotification.classList.remove('show');
+                }, 3000); // Notification disappears after 3 seconds
+            }
+
+            function checkAchievements() {
+                achievements.forEach(ach => {
+                    if (!ach.unlocked && ach.condition()) {
+                        unlockAchievement(ach.id);
+                    }
+                });
+            }
+
+            // NEW: Achievements Overlay / Modal Logic
+            achievementCounterDisplay.addEventListener('click', () => {
+                achievementsOverlay.style.display = 'flex';
+                renderAchievementsList();
+            });
+
+            closeAchievementsModalButton.addEventListener('click', () => {
+                achievementsOverlay.style.display = 'none';
+            });
+
+            function renderAchievementsList() {
+                achievementsListDiv.innerHTML = ''; // Clear previous list
+                achievements.forEach(ach => {
+                    const achievementItem = document.createElement('div');
+                    achievementItem.classList.add('achievement-item');
+                    if (ach.unlocked) {
+                        achievementItem.classList.add('unlocked');
+                    }
+                    achievementItem.innerHTML = `
+                        <span class="achievement-status">${ach.unlocked ? '✅' : '🔒'}</span>
+                        <div class="achievement-details">
+                            <h3>${ach.name}</h3>
+                            <p>${ach.description}</p>
+                        </div>
+                    `;
+                    achievementsListDiv.appendChild(achievementItem);
+                });
+            }
+
+
+            // Game initialization on load
+            loadGame();
+            calculatePps();
+            updateDisplay();
+            updateButtonStates();
+            renderAchievementsList(); // Initial render of achievements list
+        });
+  </script>
+ 
+<!-- BANNIÈRE PUBLICITAIRE FIXE -->
+<div id="pub-banner">
+  <a href="mailto:aliosmanmyumyunali13@gmail.com">Here</a>
+    <img src="images/Pub2.png" alt="Publicité">
+  </a>
+</div>
+
+</body>
+</html>
